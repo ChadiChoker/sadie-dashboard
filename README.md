@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# SADIE Dashboard — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript dashboard for the CARLA platform. Displays AI call activity captured by the SADIE Webhook Receiver backend.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+| Technology | Version |
+|-----------|---------|
+| React | 18+ |
+| TypeScript | 5+ |
+| Vite | 8+ |
+| React Router | 6+ |
+| Axios | 1+ |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Call Log Page** — table of all calls with status badge, category, customer number, duration, and timestamp
+- **Call Detail Page** — full session info, chat-style transcript, and collapsible tool call audit log
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── api/
+│   └── callsApi.ts         # Axios calls to backend API
+├── types/
+│   └── index.ts            # TypeScript interfaces
+├── components/
+│   └── StatusBadge.tsx     # Colored IN_PROGRESS / COMPLETED badge
+├── pages/
+│   ├── CallLogPage.tsx     # Route: /
+│   └── CallDetailPage.tsx  # Route: /calls/:callId
+├── App.tsx                 # Router setup
+└── main.tsx                # Entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Setup & Running
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+- Node.js 20+
+- Backend running on `http://localhost:8080`
+
+### Install dependencies
+```bash
+npm install
 ```
+
+### Run development server
+```bash
+npm run dev
+```
+
+Open `http://localhost:5173` in your browser.
+
+The Vite dev server proxies all `/beta/api/**` requests to `http://localhost:8080` automatically.
+
+---
+
+## API Endpoints Used
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/beta/api/calls` | List all call sessions |
+| GET | `/beta/api/calls/{callId}` | Full session detail + messages + tool logs |
+
+All requests include the header `x-sadie-core-secret: test-secret`.
+
+---
+
+## Related
+
+- Backend: [sadie-webhook-backend](https://github.com/ChadiChoker/sadie-webhook-backend)
